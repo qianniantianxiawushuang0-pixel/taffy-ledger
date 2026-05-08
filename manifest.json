@@ -1,0 +1,20 @@
+{
+  "name": "塔菲的金库喵",
+  "short_name": "金库喵",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff5f5",
+  "theme_color": "#ff7096",
+  "icons": [
+    {
+      "src": "marin.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "marin.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
