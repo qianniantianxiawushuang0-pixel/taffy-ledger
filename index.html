@@ -1111,6 +1111,17 @@ function getAllTransactions() {
   });
 }
 
+/** 按 id 删除单条交易记录 */
+function deleteTransactionById(id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('transactions', 'readwrite');
+    const store = tx.objectStore('transactions');
+    const request = store.delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
 /** 获取所有报告 */
 function getReports() {
   return new Promise((resolve, reject) => {
@@ -1441,10 +1452,29 @@ async function loadHome() {
                 ${noteHtml}
               </div>
             </div>
-            <div class="tx-amount ${cls}">${prefix}¥${Number(r.amount).toFixed(2)}</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="tx-amount ${cls}">${prefix}¥${Number(r.amount).toFixed(2)}</div>
+              <button class="tx-delete-btn" data-tx-id="${r.id}" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;">✕</button>
+            </div>
           </div>
         `;
       }).join('');
+
+      // 绑定删除按钮事件
+      txItemsEl.querySelectorAll('.tx-delete-btn').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+          e.stopPropagation();
+          const id = Number(this.dataset.txId);
+          try {
+            await deleteTransactionById(id);
+            showToast('已删除');
+            loadHome();
+          } catch (err) {
+            console.error('删除记录失败:', err);
+            showToast('删除失败');
+          }
+        });
+      });
     }
 
     // 角色点评 —— 始终使用数据驱动的本地分析，实时反映账单变化
