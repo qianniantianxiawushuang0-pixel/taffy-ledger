@@ -1944,13 +1944,15 @@ function buildReportHtml(data, periodLabel, avgExpense, avgIncome) {
 }
 
 async function createAndSaveWeeklyReport() {
-  const { start, end } = getOffsetCalendarWeek(0);
+  const { start, end } = getOffsetCalendarWeek(weeklyOffset);
   const data = await calcReportData(start, end);
+  const offsetLabels = { 0: '本周', '-1': '上周', '-2': '2周前', '-3': '3周前' };
+  const weekLabel = offsetLabels[String(weeklyOffset)] || '';
   if (data.records.length === 0) {
-    showToast('本周暂无记录，无法生成报告');
+    showToast(`${weekLabel}暂无记录，无法生成报告`);
     return;
   }
-  const periodLabel = `${formatDateShort(start)} ~ ${formatDateShort(end)} (本周)`;
+  const periodLabel = `${formatDateShort(start)} ~ ${formatDateShort(end)} (${weekLabel})`;
   const avgExpense = data.totalExpense / 7;
   const avgIncome = data.totalIncome / 7;
   const commentary = await generateReportCommentary(data, periodLabel, true);
